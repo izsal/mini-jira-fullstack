@@ -46,4 +46,33 @@ export const actions: Actions = {
 
     return { success: true };
   },
+
+  delete: async ({ request, fetch, cookies }) => {
+    const data = await request.formData();
+    const projectId = data.get("projectId")?.toString();
+
+    if (!projectId) {
+      return fail(400, { error: "Project ID diperlukan" });
+    }
+
+    const token = cookies.get("token");
+    const res = await fetch(`${env.PUBLIC_API_URL}/api/projects/${projectId}`, {
+      method: "DELETE",
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
+
+    if (res.status === 401) {
+      cookies.delete("token", { path: "/" });
+      throw redirect(303, "/login");
+    }
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      return fail(res.status, { error: body.error ?? "Gagal menghapus project" });
+    }
+
+    return { success: true };
+  },
 };

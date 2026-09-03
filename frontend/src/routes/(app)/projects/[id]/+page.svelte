@@ -1,25 +1,50 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { page } from "$app/stores";
   import KanbanColumn from "$lib/components/KanbanColumn.svelte";
   import { Button } from "$lib/components/ui/button";
   import { Badge } from "$lib/components/ui/badge";
   import { Input } from "$lib/components/ui/input";
   import Modal from "$lib/components/Modal.svelte";
+  import TicketDetailModal from "$lib/components/TicketDetailModal.svelte";
   import { showToast } from "$lib/stores/ui";
   import type { PageData, ActionData } from "./$types";
-  import { ArrowLeft, Plus, Search, Loader2, AlertCircle } from "lucide-svelte";
+  import { ArrowLeft, Plus, Search, Loader2, AlertCircle, UserCheck } from "lucide-svelte";
 
   export let data: PageData;
   export let form: ActionData;
 
   let searchQuery = "";
+  let onlyMyIssues = false;
   let isCreateModalOpen = false;
   let selectedStatus = "todo";
   let createLoading = false;
 
+  let isDetailModalOpen = false;
+  let activeTicket: any = null;
+
+  $: currentUser = $page.data.user;
+
   function openCreateModal(status = "todo") {
     selectedStatus = status;
     isCreateModalOpen = true;
+  }
+
+  function handleOpenDetail(ticket: any) {
+    activeTicket = ticket;
+    isDetailModalOpen = true;
+  }
+
+  function handleTicketUpdated(updatedTicket: any) {
+    const idx = data.tickets.findIndex((t: any) => t.id === updatedTicket.id);
+    if (idx !== -1) {
+      data.tickets[idx] = updatedTicket;
+      data.tickets = [...data.tickets];
+    }
+  }
+
+  function handleTicketDeleted(deletedId: number) {
+    data.tickets = data.tickets.filter((t: any) => t.id !== deletedId);
   }
 
   async function handleMoveTicket(ticketId: number, targetStatus: string) {
@@ -61,12 +86,16 @@
   }
 
   $: filteredTickets = data.tickets.filter((t: any) => {
+    if (onlyMyIssues && currentUser && t.assigneeId !== currentUser.id) {
+      return false;
+    }
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
       t.title?.toLowerCase().includes(query) ||
       t.description?.toLowerCase().includes(query) ||
-      String(t.id).includes(query)
+      String(t.id).includes(query) ||
+      t.assignee?.name?.toLowerCase().includes(query)
     );
   });
 
@@ -96,14 +125,15 @@
           </Badge>
         </div>
         <p class="text-xs text-muted-foreground mt-0.5">
-          Sprint workflow and task progress tracking
+          Sprint workflow, issue collaboration & task tracking
         </p>
       </div>
     </div>
 
     <!-- Right Controls -->
-    <div class="flex items-center gap-3">
-      <div class="relative w-64">
+    <div class="flex flex-wrap items-center gap-3">
+      <!-- Search Filter -->
+      <div class="relative w-56">
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <Input
           type="search"
@@ -112,6 +142,17 @@
           class="h-9 pl-9 text-xs bg-card"
         />
       </div>
+
+      <!-- Quick Filter "Only My Issues" -->
+      <button
+        type="button"
+        on:click={() => (onlyMyIssues = !onlyMyIssues)}
+        class="h-9 px-3 rounded-lg border text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer shadow-xs {onlyMyIssues ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-accent'}"
+        title="Filter issues assigned to you"
+      >
+        <UserCheck class="h-3.5 w-3.5" />
+        <span>My Issues</span>
+      </button>
 
       <Button variant="default" size="sm" class="shadow-sm" on:click={() => openCreateModal("todo")}>
         <Plus class="h-3.5 w-3.5 mr-1.5" />
@@ -153,6 +194,7 @@
       tickets={todo}
       on:addTicket={(e) => openCreateModal(e.detail)}
       on:moveTicket={(e) => handleMoveTicket(e.detail.ticketId, e.detail.targetStatus)}
+      on:openDetail={(e) => handleOpenDetail(e.detail)}
     />
     <KanbanColumn
       title="In Progress"
@@ -160,6 +202,7 @@
       tickets={inProgress}
       on:addTicket={(e) => openCreateModal(e.detail)}
       on:moveTicket={(e) => handleMoveTicket(e.detail.ticketId, e.detail.targetStatus)}
+      on:openDetail={(e) => handleOpenDetail(e.detail)}
     />
     <KanbanColumn
       title="Done"
@@ -167,6 +210,7 @@
       tickets={done}
       on:addTicket={(e) => openCreateModal(e.detail)}
       on:moveTicket={(e) => handleMoveTicket(e.detail.ticketId, e.detail.targetStatus)}
+      on:openDetail={(e) => handleOpenDetail(e.detail)}
     />
   </div>
 </div>
@@ -208,20 +252,42 @@
       />
     </div>
 
-    <div class="space-y-1.5">
-      <label for="ticket-status" class="text-xs font-semibold uppercase tracking-wider text-foreground">
-        Status Column
-      </label>
-      <select
-        id="ticket-status"
-        name="status"
-        bind:value={selectedStatus}
-        class="w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
-      >
-        <option value="todo">To Do</option>
-        <option value="in_progress">In Progress</option>
-        <option value="done">Done</option>
-      </select>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Status Column -->
+      <div class="space-y-1.5">
+        <label for="ticket-status" class="text-xs font-semibold uppercase tracking-wider text-foreground">
+          Status Column
+        </label>
+        <select
+          id="ticket-status"
+          name="status"
+          bind:value={selectedStatus}
+          class="w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+        >
+          <option value="todo">To Do</option>
+          <option value="in_progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
+
+      <!-- Assignee Selection -->
+      <div class="space-y-1.5">
+        <label for="ticket-assignee" class="text-xs font-semibold uppercase tracking-wider text-foreground">
+          Assignee (Optional)
+        </label>
+        <select
+          id="ticket-assignee"
+          name="assigneeId"
+          class="w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+        >
+          <option value="">Unassigned</option>
+          {#each data.users as u (u.id)}
+            <option value={u.id}>
+              {u.name} {u.id === currentUser?.id ? "(You)" : ""}
+            </option>
+          {/each}
+        </select>
+      </div>
     </div>
 
     <div class="space-y-1.5">
@@ -258,3 +324,13 @@
     </div>
   </form>
 </Modal>
+
+<!-- Modal Detail & Discussion Ticket -->
+<TicketDetailModal
+  bind:open={isDetailModalOpen}
+  bind:ticket={activeTicket}
+  users={data.users}
+  currentUser={currentUser}
+  on:ticketUpdated={(e) => handleTicketUpdated(e.detail)}
+  on:ticketDeleted={(e) => handleTicketDeleted(e.detail)}
+/>

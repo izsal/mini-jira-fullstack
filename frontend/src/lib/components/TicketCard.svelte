@@ -10,6 +10,8 @@
     description?: string;
     priority?: "low" | "medium" | "high";
     status?: string;
+    assigneeId?: number | null;
+    assignee?: { id: number; name: string; email: string } | null;
   };
 
   let isDragging = false;
@@ -35,6 +37,19 @@
   function move(targetStatus: string) {
     dispatch("moveTicket", { ticketId: ticket.id, targetStatus });
   }
+
+  function openDetail() {
+    dispatch("openDetail", ticket);
+  }
+
+  $: assigneeInitials = ticket.assignee?.name
+    ? ticket.assignee.name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : null;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -42,12 +57,16 @@
   draggable="true"
   on:dragstart={handleDragStart}
   on:dragend={handleDragEnd}
-  class="group relative flex flex-col gap-2 rounded-lg border border-border bg-card p-3.5 shadow-xs transition-all duration-150 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-sm active:cursor-grabbing cursor-grab {isDragging ? 'opacity-40 scale-95 border-primary border-dashed' : 'opacity-100'}"
+  on:click={openDetail}
+  on:keydown={(e) => e.key === "Enter" && openDetail()}
+  tabindex="0"
+  role="button"
+  class="group relative flex flex-col gap-2 rounded-lg border border-border bg-card p-3.5 shadow-xs transition-all duration-150 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-sm active:cursor-grabbing cursor-pointer {isDragging ? 'opacity-40 scale-95 border-primary border-dashed' : 'opacity-100'}"
 >
   <!-- Card Header Row: Key + Priority -->
   <div class="flex items-center justify-between text-xs">
     <div class="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-muted-foreground">
-      <GripVertical class="h-3.5 w-3.5 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
+      <GripVertical class="h-3.5 w-3.5 text-muted-foreground/50 group-hover:text-foreground transition-colors cursor-grab" />
       <span>#{ticket.id}</span>
     </div>
 
@@ -73,11 +92,12 @@
   <!-- Quick Status Actions & Footer Meta -->
   <div class="flex items-center justify-between pt-2 border-t border-border mt-1 gap-2">
     <!-- Status Quick Transitions -->
-    <div class="flex items-center gap-1">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="flex items-center gap-1" on:click|stopPropagation>
       {#if ticket.status === "todo"}
         <button
           type="button"
-          on:click|stopPropagation={() => move("in_progress")}
+          on:click={() => move("in_progress")}
           class="inline-flex items-center gap-1 text-[10px] font-medium bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground px-2 py-0.5 rounded transition-all cursor-pointer"
           title="Move to In Progress"
         >
@@ -87,7 +107,7 @@
       {:else if ticket.status === "in_progress"}
         <button
           type="button"
-          on:click|stopPropagation={() => move("todo")}
+          on:click={() => move("todo")}
           class="inline-flex items-center gap-0.5 text-[10px] font-medium bg-secondary text-muted-foreground hover:text-foreground hover:bg-muted px-1.5 py-0.5 rounded transition-all cursor-pointer"
           title="Move back to To Do"
         >
@@ -96,7 +116,7 @@
         </button>
         <button
           type="button"
-          on:click|stopPropagation={() => move("done")}
+          on:click={() => move("done")}
           class="inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 hover:bg-emerald-600 hover:text-white px-2 py-0.5 rounded transition-all cursor-pointer"
           title="Mark as Done"
         >
@@ -106,7 +126,7 @@
       {:else if ticket.status === "done"}
         <button
           type="button"
-          on:click|stopPropagation={() => move("in_progress")}
+          on:click={() => move("in_progress")}
           class="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground hover:text-foreground bg-secondary hover:bg-muted px-2 py-0.5 rounded transition-all cursor-pointer"
           title="Reopen into In Progress"
         >
@@ -117,8 +137,20 @@
     </div>
 
     <!-- Assigned Avatar -->
-    <div class="h-6 w-6 rounded-full bg-secondary border border-border flex items-center justify-center text-[10px] font-bold text-secondary-foreground shrink-0" title="Assigned member">
-      U
-    </div>
+    {#if ticket.assignee}
+      <div
+        class="h-6 w-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-[10px] font-bold shrink-0"
+        title="Assigned to {ticket.assignee.name} ({ticket.assignee.email})"
+      >
+        {assigneeInitials}
+      </div>
+    {:else}
+      <div
+        class="h-6 w-6 rounded-full border border-dashed border-border flex items-center justify-center text-[9px] text-muted-foreground font-medium shrink-0"
+        title="Unassigned"
+      >
+        -
+      </div>
+    {/if}
   </div>
 </div>

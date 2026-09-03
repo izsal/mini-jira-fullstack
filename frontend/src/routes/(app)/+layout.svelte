@@ -12,6 +12,8 @@
     Bell,
     PanelLeftClose,
     PanelLeft,
+    Users,
+    LayoutDashboard,
   } from "lucide-svelte";
 
   export let data: LayoutData;
@@ -110,16 +112,46 @@
         {/if}
       </div>
 
-      <div
-        class="flex items-center {isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2'} rounded-lg text-sm font-medium text-muted-foreground/60 cursor-not-allowed"
-        title="My Issues (Coming Soon)"
+      <a
+        href="/my-issues"
+        class="flex items-center {isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2'} rounded-lg text-sm font-medium transition-all {$page.url.pathname.startsWith('/my-issues') ? 'bg-primary text-primary-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}"
+        title="My Issues"
       >
         <CheckSquare class="h-4 w-4 shrink-0" />
         {#if !isCollapsed}
           <span class="truncate animate-in fade-in duration-200">My Issues</span>
-          <span class="ml-auto text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded font-mono">Soon</span>
         {/if}
-      </div>
+      </a>
+
+      {#if data.user?.role === "admin"}
+        {#if !isCollapsed}
+          <div class="pt-4 px-2 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground animate-in fade-in duration-200">
+            Administration
+          </div>
+        {/if}
+
+        <a
+          href="/admin"
+          class="flex items-center {isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2'} rounded-lg text-sm font-medium transition-all {$page.url.pathname === '/admin' ? 'bg-primary text-primary-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}"
+          title="Admin Dashboard"
+        >
+          <LayoutDashboard class="h-4 w-4 shrink-0" />
+          {#if !isCollapsed}
+            <span class="truncate animate-in fade-in duration-200">Dashboard</span>
+          {/if}
+        </a>
+
+        <a
+          href="/admin/users"
+          class="flex items-center {isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2'} rounded-lg text-sm font-medium transition-all {$page.url.pathname.startsWith('/admin/users') ? 'bg-primary text-primary-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}"
+          title="User Management"
+        >
+          <Users class="h-4 w-4 shrink-0" />
+          {#if !isCollapsed}
+            <span class="truncate animate-in fade-in duration-200">User Management</span>
+          {/if}
+        </a>
+      {/if}
     </div>
 
     <!-- User & Footer Info -->
@@ -131,9 +163,16 @@
               {userInitials}
             </div>
             <div class="overflow-hidden">
-              <p class="text-xs font-semibold text-foreground truncate leading-none" title={userName}>
-                {userName}
-              </p>
+              <div class="flex items-center gap-1.5">
+                <p class="text-xs font-semibold text-foreground truncate leading-none" title={userName}>
+                  {userName}
+                </p>
+                {#if data.user?.role === "admin"}
+                  <span class="text-[9px] font-extrabold uppercase px-1 py-0.5 rounded bg-primary text-primary-foreground leading-none tracking-wider">
+                    Admin
+                  </span>
+                {/if}
+              </div>
               <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 flex items-center gap-1">
                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 Online

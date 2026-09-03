@@ -84,7 +84,11 @@
   <!-- Cards List Dropzone -->
   <div class="flex-1 overflow-y-auto p-2.5 space-y-2.5 min-h-[140px]">
     {#each tickets as ticket (ticket.id)}
-      <TicketCard {ticket} on:moveTicket={forwardMoveTicket} />
+      <TicketCard
+        {ticket}
+        on:moveTicket={forwardMoveTicket}
+        on:openDetail={(e) => dispatch("openDetail", e.detail)}
+      />
     {/each}
 
     {#if tickets.length === 0}

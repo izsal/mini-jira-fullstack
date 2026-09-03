@@ -6,11 +6,20 @@ export const load: PageServerLoad = async ({ params, fetch, cookies, parent }) =
   await parent();
 
   const cookie = `token=${cookies.get("token")}`;
-  const res = await fetch(`${env.PUBLIC_API_URL}/api/projects/${params.id}/tickets`, {
-    headers: { cookie },
-  });
-  const tickets = res.ok ? await res.json() : [];
-  return { tickets, projectId: params.id };
+
+  const [ticketsRes, usersRes] = await Promise.all([
+    fetch(`${env.PUBLIC_API_URL}/api/projects/${params.id}/tickets`, {
+      headers: { cookie },
+    }),
+    fetch(`${env.PUBLIC_API_URL}/api/users`, {
+      headers: { cookie },
+    }),
+  ]);
+
+  const tickets = ticketsRes.ok ? await ticketsRes.json() : [];
+  const users = usersRes.ok ? await usersRes.json() : [];
+
+  return { tickets, projectId: params.id, users };
 };
 
 export const actions: Actions = {
@@ -19,6 +28,7 @@ export const actions: Actions = {
     const title = data.get("title")?.toString().trim();
     const description = data.get("description")?.toString().trim();
     const status = data.get("status")?.toString().trim() || "todo";
+    const assigneeId = data.get("assigneeId")?.toString().trim();
 
     if (!title) {
       return fail(400, { error: "Judul tiket wajib diisi" });
@@ -31,7 +41,12 @@ export const actions: Actions = {
         "Content-Type": "application/json",
         cookie: `token=${token}`,
       },
-      body: JSON.stringify({ title, description, status }),
+      body: JSON.stringify({
+        title,
+        description,
+        status,
+        assigneeId: assigneeId ? Number(assigneeId) : null,
+      }),
     });
 
     if (res.status === 401) {
