@@ -1,4 +1,4 @@
-import { redirect } from "@sveltejs/kit";
+import { isRedirect, redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import { env } from "$env/dynamic/public";
 
@@ -20,8 +20,10 @@ export const load: LayoutServerLoad = async ({ fetch, cookies }) => {
 
     const user = await res.json();
     return { user };
-  } catch (err: any) {
-    if (err?.status === 303) throw err;
+  } catch (err) {
+    if (isRedirect(err)) {
+      throw err;
+    }
     cookies.delete("token", { path: "/" });
     throw redirect(303, "/login");
   }

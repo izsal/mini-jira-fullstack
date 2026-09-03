@@ -2,16 +2,13 @@ import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/public";
 
-export const load: PageServerLoad = async ({ fetch, cookies }) => {
+export const load: PageServerLoad = async ({ fetch, cookies, parent }) => {
+  await parent();
+
   const token = cookies.get("token");
   const res = await fetch(`${env.PUBLIC_API_URL}/api/projects`, {
     headers: { cookie: `token=${token}` },
   });
-
-  if (res.status === 401) {
-    cookies.delete("token", { path: "/" });
-    throw redirect(303, "/login");
-  }
 
   const projects = res.ok ? await res.json() : [];
   return { projects };
@@ -27,11 +24,12 @@ export const actions: Actions = {
       return fail(400, { error: "Nama project tidak boleh kosong" });
     }
 
+    const token = cookies.get("token");
     const res = await fetch(`${env.PUBLIC_API_URL}/api/projects`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        cookie: `token=${cookies.get("token")}`,
+        cookie: `token=${token}`,
       },
       body: JSON.stringify({ name, description }),
     });

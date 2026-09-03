@@ -4,13 +4,18 @@
   import { Input } from "$lib/components/ui/input";
   import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "$lib/components/ui/card";
   import { page } from "$app/stores";
+  import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import { KanbanSquare, Mail, Lock, AlertCircle, CheckCircle2, Loader2, UserPlus } from "lucide-svelte";
 
   export let form: { error?: string } | null = null;
   let loading = false;
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4">
+<div class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 dark:from-zinc-950 dark:via-black dark:to-zinc-950 p-4">
+  <div class="absolute top-4 right-4 z-10">
+    <ThemeToggle />
+  </div>
+
   <div class="w-full max-w-md">
     <!-- Brand Header -->
     <div class="flex flex-col items-center mb-8 text-center">
