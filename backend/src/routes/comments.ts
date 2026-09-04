@@ -4,7 +4,15 @@ import { comments, users, activityLogs } from "../db/schema";
 import { eq, asc } from "drizzle-orm";
 import type { JwtPayload } from "../middleware/auth";
 
-export const commentRoutes = new Hono();
+// 1. Declare the type for context variables
+type Env = {
+  Variables: {
+    user: JwtPayload;
+  }
+}
+
+// 2. Pass Env as the generic to Hono
+export const commentRoutes = new Hono<Env>();
 
 // GET /api/tickets/:ticketId/comments
 commentRoutes.get("/", async (c) => {
@@ -43,7 +51,8 @@ commentRoutes.get("/", async (c) => {
 
 // POST /api/tickets/:ticketId/comments
 commentRoutes.post("/", async (c) => {
-  const user = c.get("user") as JwtPayload;
+  // Now c.get("user") is automatically typed as JwtPayload
+  const user = c.get("user");
   const ticketId = Number(c.req.param("ticketId"));
   const { body } = await c.req.json();
 

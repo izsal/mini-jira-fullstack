@@ -4,7 +4,15 @@ import { tickets, users, comments, activityLogs } from "../db/schema";
 import { eq } from "drizzle-orm";
 import type { JwtPayload } from "../middleware/auth";
 
-export const ticketRoutes = new Hono();
+// 1. Declare the type for context variables
+type Env = {
+  Variables: {
+    user: JwtPayload;
+  }
+}
+
+// 2. Pass Env as the generic to Hono
+export const ticketRoutes = new Hono<Env>();
 
 // GET /api/projects/:projectId/tickets
 ticketRoutes.get("/", async (c) => {
@@ -37,10 +45,10 @@ ticketRoutes.get("/", async (c) => {
     createdAt: t.createdAt,
     assignee: t.assigneeId
       ? {
-          id: t.assigneeId,
-          name: t.assigneeName,
-          email: t.assigneeEmail,
-        }
+        id: t.assigneeId,
+        name: t.assigneeName,
+        email: t.assigneeEmail,
+      }
       : null,
   }));
 
@@ -68,7 +76,7 @@ ticketRoutes.post("/", async (c) => {
 
 // PATCH /api/projects/:projectId/tickets/:id
 ticketRoutes.patch("/:id", async (c) => {
-  const user = c.get("user") as JwtPayload;
+  const user = c.get("user");
   const id = Number(c.req.param("id"));
   const updates = await c.req.json(); // e.g. { status, title, description, assigneeId }
 
@@ -92,7 +100,7 @@ ticketRoutes.patch("/:id", async (c) => {
 
 // DELETE /api/projects/:projectId/tickets/:id (Hanya Admin / Project Member)
 ticketRoutes.delete("/:id", async (c) => {
-  const user = c.get("user") as JwtPayload;
+  const user = c.get("user");
   const id = Number(c.req.param("id"));
 
   // Check admin role

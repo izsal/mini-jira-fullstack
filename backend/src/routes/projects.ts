@@ -4,7 +4,15 @@ import { projects, tickets, comments, activityLogs, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import type { JwtPayload } from "../middleware/auth";
 
-export const projectRoutes = new Hono();
+// 1. Declare the type for context   variables
+type Env = {
+  Variables: {
+    user: JwtPayload;
+  }
+}
+
+// 2. Pass Env as the generic to Hono
+export const projectRoutes = new Hono<Env>();
 
 // GET /api/projects
 projectRoutes.get("/", async (c) => {
@@ -39,7 +47,7 @@ projectRoutes.get("/", async (c) => {
 
 // POST /api/projects
 projectRoutes.post("/", async (c) => {
-  const user = c.get("user") as JwtPayload;
+  const user = c.get("user");
   const { name, description } = await c.req.json();
 
   const [project] = await db
@@ -60,7 +68,7 @@ projectRoutes.get("/:id", async (c) => {
 
 // DELETE /api/projects/:id (Hanya Admin atau Owner Project)
 projectRoutes.delete("/:id", async (c) => {
-  const user = c.get("user") as JwtPayload;
+  const user = c.get("user");
   const id = Number(c.req.param("id"));
 
   const project = await db.query.projects.findFirst({ where: eq(projects.id, id) });

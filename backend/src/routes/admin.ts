@@ -4,11 +4,20 @@ import { projects, tickets, users, comments, activityLogs } from "../db/schema";
 import { eq, desc } from "drizzle-orm";
 import type { JwtPayload } from "../middleware/auth";
 
-export const adminRoutes = new Hono();
+// 1. Declare the type for context variables
+type Env = {
+  Variables: {
+    user: JwtPayload;
+  }
+}
+
+// 2. Pass Env as the generic to Hono
+export const adminRoutes = new Hono<Env>();
 
 // GET /api/admin/stats - data statistik menyeluruh untuk Admin Dashboard
 adminRoutes.get("/stats", async (c) => {
-  const currentUser = c.get("user") as JwtPayload;
+  // Now c.get("user") is automatically typed as JwtPayload
+  const currentUser = c.get("user");
   if (currentUser.role !== "admin") {
     return c.json({ error: "Forbidden: Admin access required" }, 403);
   }

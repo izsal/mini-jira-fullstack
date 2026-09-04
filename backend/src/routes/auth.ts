@@ -8,10 +8,19 @@ import { eq } from "drizzle-orm";
 
 import { authMiddleware, type JwtPayload } from "../middleware/auth";
 
-export const authRoutes = new Hono();
+// 1. Declare the type for context variables
+type Env = {
+  Variables: {
+    user: JwtPayload;
+  }
+}
+
+// 2. Pass Env as the generic to Hono
+export const authRoutes = new Hono<Env>();
 
 authRoutes.get("/me", authMiddleware, async (c) => {
-  const user = c.get("user") as JwtPayload;
+  // Now c.get("user") is automatically typed as JwtPayload
+  const user = c.get("user");
   const dbUser = await db.query.users.findFirst({
     where: eq(users.id, user.sub),
   });
