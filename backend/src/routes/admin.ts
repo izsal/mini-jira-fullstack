@@ -18,6 +18,8 @@ export const adminRoutes = new Hono<Env>();
 adminRoutes.get("/stats", async (c) => {
   // Now c.get("user") is automatically typed as JwtPayload
   const currentUser = c.get("user");
+
+  // condition for check this route just for admin
   if (currentUser.role !== "admin") {
     return c.json({ error: "Forbidden: Admin access required" }, 403);
   }
