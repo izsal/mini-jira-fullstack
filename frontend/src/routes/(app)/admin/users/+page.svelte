@@ -44,21 +44,21 @@
   }
 </script>
 
-<div class="max-w-5xl mx-auto space-y-8">
+<div class="max-w-5xl mx-auto space-y-6 sm:space-y-8">
   <!-- Page Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
     <div class="flex items-center gap-3">
-      <Button variant="ghost" size="icon" href="/projects" class="h-9 w-9 text-muted-foreground hover:text-foreground" title="Back to projects">
+      <Button variant="ghost" size="icon" href="/projects" class="h-9 w-9 text-muted-foreground hover:text-foreground shrink-0" title="Back to projects">
         <ArrowLeft class="h-4 w-4" />
       </Button>
       <div>
-        <h1 class="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
           User Management
           <Badge variant="secondary" class="font-normal text-xs">
             {data.users.length} Users
           </Badge>
         </h1>
-        <p class="text-sm text-muted-foreground mt-1">
+        <p class="text-xs sm:text-sm text-muted-foreground mt-1">
           Manage workspace team members and administrator permissions.
         </p>
       </div>
@@ -67,13 +67,13 @@
 
   <!-- Search Filter -->
   <div class="flex items-center justify-between gap-4">
-    <div class="relative w-full max-w-sm">
+    <div class="relative w-full max-w-md">
       <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"
         placeholder="Cari user berdasarkan nama atau email..."
         bind:value={searchQuery}
-        class="pl-9 bg-card"
+        class="pl-9 bg-card w-full"
       />
     </div>
   </div>

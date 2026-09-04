@@ -67,23 +67,23 @@
   }
 </script>
 
-<div class="max-w-5xl mx-auto space-y-8">
+<div class="max-w-5xl mx-auto space-y-6 sm:space-y-8">
   <!-- Page Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
         My Issues
         <Badge variant="secondary" class="font-normal text-xs">
           {data.myTickets.length} Assigned
         </Badge>
       </h1>
-      <p class="text-sm text-muted-foreground mt-1">
+      <p class="text-xs sm:text-sm text-muted-foreground mt-1">
         Semua tiket dan tugas yang ditugaskan kepada Anda di seluruh project dan papan Kanban.
       </p>
     </div>
 
-    <div class="flex items-center gap-2">
-      <Button variant="outline" size="sm" href="/projects">
+    <div class="flex items-center gap-2 w-full sm:w-auto">
+      <Button variant="outline" size="sm" href="/projects" class="w-full sm:w-auto justify-center">
         <FolderKanban class="h-4 w-4 mr-1.5" />
         Explore Projects
       </Button>
@@ -92,32 +92,32 @@
 
   <!-- Search & Status Filter Tabs -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <!-- Filter Tabs -->
-    <div class="flex items-center p-1 rounded-lg bg-secondary/80 border border-border w-fit">
+    <!-- Filter Tabs (Scrollable on small mobile) -->
+    <div class="flex items-center p-1 rounded-lg bg-secondary/80 border border-border w-full sm:w-fit overflow-x-auto">
       <button
         type="button"
-        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer {activeTab === 'all' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
+        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 {activeTab === 'all' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
         on:click={() => (activeTab = "all")}
       >
         All ({data.myTickets.length})
       </button>
       <button
         type="button"
-        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer {activeTab === 'todo' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
+        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 {activeTab === 'todo' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
         on:click={() => (activeTab = "todo")}
       >
         To Do ({data.myTickets.filter((t) => t.status === "todo").length})
       </button>
       <button
         type="button"
-        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer {activeTab === 'in_progress' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
+        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 {activeTab === 'in_progress' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
         on:click={() => (activeTab = "in_progress")}
       >
         In Progress ({data.myTickets.filter((t) => t.status === "in_progress").length})
       </button>
       <button
         type="button"
-        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer {activeTab === 'done' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
+        class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 {activeTab === 'done' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}"
         on:click={() => (activeTab = "done")}
       >
         Done ({data.myTickets.filter((t) => t.status === "done").length})
@@ -125,13 +125,13 @@
     </div>
 
     <!-- Search query -->
-    <div class="relative w-full max-w-xs">
+    <div class="relative w-full sm:max-w-xs">
       <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"
         placeholder="Cari tugas saya..."
         bind:value={searchQuery}
-        class="pl-9 bg-card"
+        class="pl-9 bg-card w-full"
       />
     </div>
   </div>

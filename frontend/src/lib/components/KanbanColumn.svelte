@@ -51,7 +51,7 @@
   on:dragover={handleDragOver}
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
-  class="w-80 shrink-0 flex flex-col rounded-xl bg-muted/30 dark:bg-card/40 border transition-all duration-150 max-h-[calc(100vh-12rem)] shadow-xs {isDragOver ? 'border-primary ring-2 ring-primary/20 bg-accent/60 scale-[1.01]' : 'border-border'}"
+  class="w-[85vw] max-w-[330px] sm:w-80 shrink-0 snap-center flex flex-col rounded-xl bg-muted/30 dark:bg-card/40 border transition-all duration-150 max-h-[calc(100vh-14rem)] sm:max-h-[calc(100vh-12rem)] shadow-xs {isDragOver ? 'border-primary ring-2 ring-primary/20 bg-accent/60 scale-[1.01]' : 'border-border'}"
 >
   <!-- Column Header -->
   <div class="p-3.5 flex items-center justify-between border-b border-border">

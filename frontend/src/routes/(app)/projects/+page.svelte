@@ -25,23 +25,23 @@
   );
 </script>
 
-<div class="max-w-6xl mx-auto space-y-8">
+<div class="max-w-6xl mx-auto space-y-6 sm:space-y-8">
   <!-- Page Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
         Projects
         <Badge variant="secondary" class="font-normal text-xs">
           {data.projects.length} Total
         </Badge>
       </h1>
-      <p class="text-sm text-muted-foreground mt-1">
+      <p class="text-xs sm:text-sm text-muted-foreground mt-1">
         Manage your workspaces, track tasks, and collaborate with your team.
       </p>
     </div>
 
-    <div class="flex items-center gap-3">
-      <Button variant="default" class="shadow-sm" on:click={() => (isCreateModalOpen = true)}>
+    <div class="flex items-center gap-3 w-full sm:w-auto">
+      <Button variant="default" class="shadow-sm w-full sm:w-auto justify-center" on:click={() => (isCreateModalOpen = true)}>
         <Plus class="h-4 w-4 mr-1.5" />
         New Project
       </Button>
@@ -50,20 +50,20 @@
 
   <!-- Search and Filter Bar -->
   <div class="flex items-center justify-between gap-4">
-    <div class="relative w-full max-w-sm">
+    <div class="relative w-full max-w-md">
       <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"
         placeholder="Search projects by name..."
         bind:value={searchQuery}
-        class="pl-9 bg-card"
+        class="pl-9 bg-card w-full"
       />
     </div>
   </div>
 
   <!-- Projects Grid -->
   {#if filteredProjects.length > 0}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {#each filteredProjects as project (project.id)}
         <Card class="hover:border-primary/50 hover:shadow-md transition-all duration-200 flex flex-col group bg-card border-border">
           <CardHeader class="pb-3">

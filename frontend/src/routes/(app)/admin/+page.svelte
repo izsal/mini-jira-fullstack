@@ -39,12 +39,12 @@
   }
 </script>
 
-<div class="max-w-6xl mx-auto space-y-8">
+<div class="max-w-6xl mx-auto space-y-6 sm:space-y-8">
   <!-- Dashboard Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
     <div>
       <div class="flex items-center gap-2.5">
-        <h1 class="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex flex-wrap items-center gap-2 sm:gap-3">
           Admin Dashboard
           <Badge variant="default" class="text-xs uppercase font-extrabold tracking-wider gap-1">
             <ShieldCheck class="h-3.5 w-3.5" />
@@ -52,17 +52,17 @@
           </Badge>
         </h1>
       </div>
-      <p class="text-sm text-muted-foreground mt-1">
+      <p class="text-xs sm:text-sm text-muted-foreground mt-1">
         Pantau kesehatan workspace, distribusi sprint tiket, beban kerja tim, dan audit aktivitas sistem secara terpusat.
       </p>
     </div>
 
-    <div class="flex items-center gap-3">
-      <Button variant="outline" size="sm" href="/admin/users">
+    <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+      <Button variant="outline" size="sm" href="/admin/users" class="flex-1 sm:flex-none justify-center">
         <Users class="h-4 w-4 mr-1.5" />
         Manage Users
       </Button>
-      <Button variant="default" size="sm" href="/projects">
+      <Button variant="default" size="sm" href="/projects" class="flex-1 sm:flex-none justify-center">
         <FolderKanban class="h-4 w-4 mr-1.5" />
         All Projects
       </Button>

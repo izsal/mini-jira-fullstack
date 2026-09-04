@@ -131,15 +131,15 @@
     </div>
 
     <!-- Right Controls -->
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
       <!-- Search Filter -->
-      <div class="relative w-56">
+      <div class="relative w-full sm:w-56">
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <Input
           type="search"
           placeholder="Filter tickets..."
           bind:value={searchQuery}
-          class="h-9 pl-9 text-xs bg-card"
+          class="h-9 pl-9 text-xs bg-card w-full"
         />
       </div>
 
@@ -147,14 +147,14 @@
       <button
         type="button"
         on:click={() => (onlyMyIssues = !onlyMyIssues)}
-        class="h-9 px-3 rounded-lg border text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer shadow-xs {onlyMyIssues ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-accent'}"
+        class="h-9 px-3 rounded-lg border text-xs font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs flex-1 sm:flex-none {onlyMyIssues ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-accent'}"
         title="Filter issues assigned to you"
       >
         <UserCheck class="h-3.5 w-3.5" />
         <span>My Issues</span>
       </button>
 
-      <Button variant="default" size="sm" class="shadow-sm" on:click={() => openCreateModal("todo")}>
+      <Button variant="default" size="sm" class="shadow-sm flex-1 sm:flex-none justify-center" on:click={() => openCreateModal("todo")}>
         <Plus class="h-3.5 w-3.5 mr-1.5" />
         New Issue
       </Button>
@@ -162,8 +162,8 @@
   </div>
 
   <!-- Progress Bar Overview -->
-  <div class="flex items-center justify-between gap-4 p-3 bg-card text-card-foreground rounded-lg border border-border text-xs">
-    <div class="flex items-center gap-4 text-muted-foreground">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-card text-card-foreground rounded-lg border border-border text-xs">
+    <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-muted-foreground">
       <div class="flex items-center gap-1.5">
         <span class="h-2 w-2 rounded-full bg-zinc-400"></span>
         <span>To Do: <strong class="text-foreground">{todo.length}</strong></span>
@@ -178,16 +178,16 @@
       </div>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
       <span class="text-muted-foreground">{completionRate}% Completed</span>
-      <div class="w-28 h-2 bg-secondary rounded-full overflow-hidden border border-border">
+      <div class="w-24 sm:w-28 h-2 bg-secondary rounded-full overflow-hidden border border-border">
         <div class="h-full bg-emerald-500 transition-all duration-300" style="width: {completionRate}%"></div>
       </div>
     </div>
   </div>
 
   <!-- Kanban Columns Container -->
-  <div class="flex gap-6 overflow-x-auto pb-6 items-start">
+  <div class="flex gap-4 sm:gap-6 overflow-x-auto pb-6 items-start snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0">
     <KanbanColumn
       title="To Do"
       status="todo"
