@@ -200,3 +200,13 @@ docker compose up --build
 - **Register**: Buka `http://localhost:5173/register` untuk mendaftarkan akun baru (`name`, `email`, `password`).
 - **Login**: Buka `http://localhost:5173/login` untuk masuk ke akun yang sudah terdaftar.
 - **Auto Session**: Token JWT disimpan secara aman di HTTP-only cookie untuk melindungi rute internal `(app)`.
+
+## menjalankan dengan docker untuk di up deploy
+docker compose config --quiet && echo OK
+docker compose up -d --build
+docker compose ps
+docker compose exec frontend env | grep -E "ORIGIN|PUBLIC_API_URL"
+
+
+## tambahan ketika di up deploy run migrate dengan docker
+docker compose exec backend bunx drizzle-kit push

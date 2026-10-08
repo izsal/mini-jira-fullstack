@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -8,8 +6,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mini_jira
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -21,10 +17,10 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/mini_jira
       JWT_SECRET: change-me-in-production
-      FRONTEND_URL: http://localhost:5173
+      FRONTEND_URL: https://jira.qwarts.my.id
       PORT: 3000
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
 
   frontend:
     build: ./frontend
@@ -32,9 +28,10 @@ services:
     depends_on:
       - backend
     environment:
-      PUBLIC_API_URL: http://localhost:3000
+      PUBLIC_API_URL: https://api-jira.qwarts.my.id
+      ORIGIN: https://jira.qwarts.my.id
     ports:
-      - "5173:3000"
+      - "127.0.0.1:5173:3000"
 
 volumes:
   pgdata:
