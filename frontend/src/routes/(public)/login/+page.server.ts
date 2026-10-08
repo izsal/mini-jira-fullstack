@@ -27,6 +27,7 @@ export const actions: Actions = {
           path: "/",
           httpOnly: true,
           sameSite: "lax",
+          domain: ".qwarts.my.id",
           maxAge: 60 * 60 * 24 * 7,
         });
       }
