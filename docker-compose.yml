@@ -30,6 +30,7 @@ services:
     environment:
       PUBLIC_API_URL: https://api-jira.qwarts.my.id
       ORIGIN: https://jira.qwarts.my.id
+      COOKIE_DOMAIN: .qwarts.my.id
     ports:
       - "127.0.0.1:5173:3000"
 
